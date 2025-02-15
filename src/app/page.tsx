@@ -1,8 +1,9 @@
-import FileManager from "./file-manager";
+import { FileManagerContainer } from "~/components/file-manager/file-manager-container"
+
 export default function HomePage() {
   return (
-    <div>
-      <FileManager />
+    <div className="p-4">
+      <FileManagerContainer />
     </div>
-  );
+  )
 }
