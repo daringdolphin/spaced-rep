@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "~/components/ui/button"
@@ -10,7 +12,7 @@ import {
 } from "~/components/ui/dialog"
 import { Textarea } from "~/components/ui/textarea"
 import { toast } from "~/hooks/use-toast"
-import { type CardFormData, type Card } from "~/types/schema"
+import { type Card } from "~/types/schema"
 
 interface CreateCardModalProps {
   deckId: number
@@ -28,42 +30,41 @@ export function CreateCardModal({ deckId, isOpen, onClose, onSuccess }: CreateCa
     setIsSubmitting(true)
 
     const formData = new FormData(event.currentTarget)
-    const cardData: CardFormData = {
+    const cardData = {
       deckId,
       question: formData.get("question") as string,
       answer: formData.get("answer") as string,
     }
 
     try {
-      const response = await fetch("/api/cards", {
+      const response = await fetch("/api/cards/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cardData),
       })
 
+      const result = await response.json() as { success: boolean, card?: Card, error?: string }
+
       if (!response.ok) {
-        const error = await response.json() as { message: string }
-        throw new Error(error.message ?? "Failed to create card")
+        throw new Error(result.error ?? "Failed to create card")
+      }
+
+      if (!result.success) {
+        throw new Error(result.error ?? "Failed to create card")
       }
 
       toast({
-        title: "Card created",
+        title: "Success",
         description: "Your flashcard has been added to the deck",
       })
 
-      const card = await response.json() as Card
-      onSuccess(card)
-
+      onSuccess(result.card!)
       router.refresh()
       onClose()
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : "An unexpected error occurred while creating the card"
-
+    } catch (error) {
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error instanceof Error ? error.message : "Failed to create card",
         variant: "destructive",
       })
     } finally {

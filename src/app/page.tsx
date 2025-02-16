@@ -1,5 +1,5 @@
 import { RootLayout } from "~/components/layout"
-import { CardManagerContainer } from "~/components/card-manager/card-manager-container"
+import { CardManagerContainer } from "~/components/cards/card-manager-container"
 
 export default function HomePage() {
   return (

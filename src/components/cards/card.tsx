@@ -1,6 +1,9 @@
+"use client"
+
 import { Plus } from "lucide-react"
 import type { Card as CardType } from "~/types/schema"
 import { cn } from "~/lib/utils"
+import { useMemo } from "react"
 
 interface CardProps {
   card?: CardType
@@ -10,7 +13,11 @@ interface CardProps {
 }
 
 export function Card({ card, isCreateCard, onClick, className }: CardProps) {
-  const daysSinceLastReview = card?.lastReviewed ? Math.floor((new Date().getTime() - new Date(card.lastReviewed).getTime()) / (1000 * 60 * 60 * 24)) : 0
+  const daysSinceLastReview = useMemo(() => {
+    if (!card?.lastReviewed) return 0
+    return Math.floor((new Date().getTime() - new Date(card.lastReviewed).getTime()) / (1000 * 60 * 60 * 24))
+  }, [card?.lastReviewed])
+
   if (isCreateCard) {
     return (
       <button
