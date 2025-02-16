@@ -20,10 +20,25 @@ import { relations } from "drizzle-orm";
  */
 export const createTable = pgTableCreator((name) => `spaced-rep_${name}`);
 
+// New users table for Clerk integration
+export const users = createTable("user", {
+  id: varchar("id", { length: 256 }).primaryKey(), // Clerk user ID
+  email: varchar("email", { length: 256 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});
+
+// Updated decks table with user relationship
 export const decks = createTable(
   "deck",
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+    userId: varchar("user_id", { length: 256 })
+      .references(() => users.id, { onDelete: "cascade" }), // nullable for MVP, required after auth
     name: varchar("name", { length: 256 }).notNull(),
     description: text("description"),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -35,6 +50,7 @@ export const decks = createTable(
   },
   (deck) => ({
     nameIndex: index("deck_name_idx").on(deck.name),
+    userIdIndex: index("deck_user_id_idx").on(deck.userId),
   })
 );
 
@@ -62,9 +78,17 @@ export const cards = createTable(
   })
 );
 
-// Define relationships between tables
-export const decksRelations = relations(decks, ({ many }) => ({
+// Updated relations
+export const usersRelations = relations(users, ({ many }) => ({
+  decks: many(decks),
+}));
+
+export const decksRelations = relations(decks, ({ many, one }) => ({
   cards: many(cards),
+  user: one(users, {
+    fields: [decks.userId],
+    references: [users.id],
+  }),
 }));
 
 export const cardsRelations = relations(cards, ({ one }) => ({

@@ -10,6 +10,7 @@ interface CardProps {
 }
 
 export function Card({ card, isCreateCard, onClick, className }: CardProps) {
+  const daysSinceLastReview = card?.lastReviewed ? Math.floor((new Date().getTime() - new Date(card.lastReviewed).getTime()) / (1000 * 60 * 60 * 24)) : 0
   if (isCreateCard) {
     return (
       <button
@@ -20,7 +21,7 @@ export function Card({ card, isCreateCard, onClick, className }: CardProps) {
         )}
       >
         <Plus className="h-8 w-8 text-gray-400 group-hover:text-gray-500" />
-        <span className="mt-2 block text-sm font-medium text-gray-900">Create new card</span>
+        <span className="mt-2 block text-sm font-medium text-gray-900">New card</span>
       </button>
     )
   }
@@ -36,7 +37,7 @@ export function Card({ card, isCreateCard, onClick, className }: CardProps) {
         <p className="mt-1 text-sm text-gray-500 line-clamp-3 flex-grow">{card.answer}</p>
       </div>
       <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t">
-        Last reviewed: {new Date(card.lastReviewed).toLocaleDateString()}
+        Last reviewed: {daysSinceLastReview} days ago
       </div>
     </div>
   )

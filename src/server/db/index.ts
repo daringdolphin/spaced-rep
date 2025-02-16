@@ -4,15 +4,21 @@ import postgres from "postgres";
 import { env } from "~/env";
 import * as schema from "./schema";
 
-/**
- * Cache the database connection in development. This avoids creating a new connection on every HMR
- * update.
- */
+// Disable prefetch as it is not supported for Supabase's pooling
+const connectionString = env.DATABASE_URL;
 const globalForDb = globalThis as unknown as {
-  conn: postgres.Sql | undefined;
+  client: postgres.Sql | undefined;
 };
 
-const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
-if (env.NODE_ENV !== "production") globalForDb.conn = conn;
+// Create postgres client with pooling and SSL for production
+const client = globalForDb.client ?? 
+  postgres(connectionString, { 
+    prepare: false,
+    ssl: process.env.NODE_ENV === "production",
+  });
 
-export const db = drizzle(conn, { schema });
+// Cache client in development
+if (process.env.NODE_ENV !== "production") globalForDb.client = client;
+
+// Initialize drizzle with schema
+export const db = drizzle(client, { schema });

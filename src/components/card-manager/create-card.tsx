@@ -4,7 +4,6 @@ import { Button } from "~/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -78,9 +77,6 @@ export function CreateCardModal({ deckId, isOpen, onClose, onSuccess }: CreateCa
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Create New Card</DialogTitle>
-            <DialogDescription>
-              Add a new flashcard to your deck. Enter the question and answer below.
-            </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
@@ -122,7 +118,7 @@ export function CreateCardModal({ deckId, isOpen, onClose, onSuccess }: CreateCa
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="primary-500 hover:bg-primary-900">
               {isSubmitting ? "Creating..." : "Create Card"}
             </Button>
           </DialogFooter>
