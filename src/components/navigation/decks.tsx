@@ -5,13 +5,13 @@ import { Folder } from "lucide-react"
 import Link from "next/link"
 import { cn } from "~/lib/utils"
 
-interface FolderItemProps {
+interface DeckProps {
   href: string
   children: React.ReactNode
   isActive?: boolean
 }
 
-export function FolderItem({ href, children, isActive }: FolderItemProps) {
+export function Deck({ href, children, isActive }: DeckProps) {
   return (
     <Link
       href={href}

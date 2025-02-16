@@ -1,34 +1,28 @@
-import "~/styles/globals.css";
+import { Inter } from "next/font/google"
+import "~/styles/globals.css"
+import { SidebarProvider } from "~/context/sidebar-context"
+import { Toaster } from "~/components/ui/toaster"
 
-import { GeistSans } from "geist/font/sans";
-import { type Metadata } from "next";
-import { Sidebar } from "~/components/sidebar/sidebar"
-import { Header } from "~/components/navigation/header"
+const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "File Manager",
-  description: "Modern file management system",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
-};
-
-interface RootLayoutProps {
-  children: React.ReactNode
+export const metadata = {
+  title: "Card Manager",
+  description: "Manage your card decks",
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" className={GeistSans.variable}>
-      <body className="min-h-screen bg-background antialiased">
-        <div className="flex h-screen">
-          <Sidebar />
-          <div className="flex-1 flex flex-col">
-            <Header />
-            <main className="flex-1 overflow-auto">
-              {children}
-            </main>
-          </div>
-        </div>
+    <html lang="en">
+      <body className={inter.className}>
+        <SidebarProvider>
+          {children}
+        </SidebarProvider>
+        <Toaster />
       </body>
     </html>
-  );
+  )
 }

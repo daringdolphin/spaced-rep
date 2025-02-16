@@ -1,8 +1,10 @@
 "use client"
 
+import { UserIcon, ChevronsLeft, Menu, Plus } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { FolderItem } from "~/components/navigation/folder-item"
+import { Deck } from "~/components/navigation/decks"
 import { cn } from "~/lib/utils"
+import { useSidebar } from "~/context/sidebar-context"
 
 interface SidebarProps {
   className?: string
@@ -17,39 +19,58 @@ interface Deck {
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
+  const { isOpen, setIsOpen } = useSidebar()
   
   // TODO: Replace with API call using React Query or SWR
   const decks: Deck[] = [
     {
       id: "all",
-      name: "All Decks",
+      name: "All Cards",
       href: "/decks",
     },
   ]
 
-  return (
-    <div className={cn("w-64 border-r bg-white", className)}>
-      <div className="p-4">
-        <h1 className="text-xl font-bold">Showpad</h1>
-      </div>
-      <nav className="space-y-1 px-2">
-        <div className="py-3">
-          <div className="px-3 text-xs font-medium uppercase text-gray-500">
-            All Decks
-          </div>
-          <div className="mt-2 space-y-1">
-            {decks.map((deck) => (
-              <FolderItem
-                key={deck.id}
-                href={deck.href}
-                isActive={pathname === deck.href}
-              >
-                {deck.name}
-              </FolderItem>
-            ))}
-          </div>
+    return (
+      <div className={cn("border-r bg-background overflow-hidden transition-all duration-300", 
+        isOpen ? "w-64" : "w-0",
+        className
+      )}>
+        <div className="flex items-center justify-between p-4">
+          <UserIcon className="h-4 w-4" />
+          {isOpen ? (
+            <ChevronsLeft 
+              className="h-4 w-4 cursor-pointer hover:text-primary transition-colors" 
+              onClick={() => setIsOpen(false)} 
+            />
+          ) : (
+            <Menu 
+              className="h-4 w-4 cursor-pointer hover:text-primary transition-colors" 
+              onClick={() => setIsOpen(true)} 
+            />
+          )}
         </div>
-      </nav>
-    </div>
+        <nav className="flex flex-col gap-1 px-2">
+          <div className="flex flex-col gap-1">
+            <div className="px-3 py-2 text-xs font-medium uppercase text-muted-foreground">
+              All Decks
+            </div>
+            <div className="flex flex-col gap-1">
+              {decks.map((deck) => (
+                <Deck
+                  key={deck.id}
+                  href={deck.href}
+                  isActive={pathname === deck.href}
+                >
+                  {deck.name}
+                </Deck>
+              ))}
+              <button className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted">
+                <Plus className="h-4 w-4" />
+                <span className="font-medium">New Deck</span>
+              </button>
+            </div>
+          </div>
+        </nav>
+      </div>
   )
 } 
