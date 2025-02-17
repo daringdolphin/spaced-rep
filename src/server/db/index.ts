@@ -1,24 +1,43 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-
 import { env } from "~/env";
 import * as schema from "./schema";
 
-// Disable prefetch as it is not supported for Supabase's pooling
-const connectionString = env.DATABASE_URL;
-const globalForDb = globalThis as unknown as {
-  client: postgres.Sql | undefined;
-};
+// Prevent browser imports
+if (typeof window !== "undefined") {
+  throw new Error(
+    "This file should not be imported in the browser. Use server actions instead."
+  );
+}
 
-// Create postgres client with pooling and SSL for production
-const client = globalForDb.client ?? 
-  postgres(connectionString, { 
+// Types for global caching
+declare global {
+  // eslint-disable-next-line no-var
+  var cachedClient: postgres.Sql | undefined;
+}
+
+let client: postgres.Sql;
+
+// Development: Use global caching to prevent multiple connections during hot reload
+if (process.env.NODE_ENV === "development") {
+  if (!global.cachedClient) {
+    global.cachedClient = postgres(env.DATABASE_URL, {
+      prepare: false,
+      // Disable SSL for local development
+      ssl: false,
+      max: 20, // Set pool size
+    });
+  }
+  client = global.cachedClient;
+} 
+// Production: Create new connection
+else {
+  client = postgres(env.DATABASE_URL, {
     prepare: false,
-    ssl: process.env.NODE_ENV === "production",
+    ssl: true,
+    max: 20,
   });
-
-// Cache client in development
-if (process.env.NODE_ENV !== "production") globalForDb.client = client;
+}
 
 // Initialize drizzle with schema
 export const db = drizzle(client, { schema });

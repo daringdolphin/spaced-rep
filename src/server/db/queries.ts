@@ -131,6 +131,19 @@ export async function deleteDeck(deckId: number) {
 }
 
 // Card Queries
+
+export async function getCardsInDeck(deckId: number) {
+  try {
+    const cardsInDeck = await db.query.cards.findMany({
+      where: eq(cards.deckId, deckId),
+    });
+    return { success: true, cards: cardsInDeck };
+  } catch (error) {
+    console.error("Error fetching cards in deck:", error);
+    return { success: false, error: "Failed to fetch cards in deck" };
+  }
+}
+
 export async function createCard(input: z.infer<typeof CreateCardSchema>) {
   try {
     const validated = CreateCardSchema.parse(input);
@@ -224,5 +237,18 @@ export async function updateCardReviewDate(cardId: number) {
   } catch (error) {
     console.error("Error updating card review date:", error);
     return { success: false, error: "Failed to update review date" };
+  }
+}
+
+// Add this query for getting all cards
+export async function getAllCards() {
+  try {
+    const allCards = await db.query.cards.findMany({
+      orderBy: [desc(cards.updatedAt)],
+    });
+    return { success: true, cards: allCards };
+  } catch (error) {
+    console.error("Error fetching all cards:", error);
+    return { success: false, error: "Failed to fetch cards" };
   }
 }

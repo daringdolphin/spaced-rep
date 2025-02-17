@@ -3,7 +3,6 @@
 import { Plus } from "lucide-react"
 import type { Card as CardType } from "~/types/schema"
 import { cn } from "~/lib/utils"
-import { useMemo } from "react"
 
 interface CardProps {
   card?: CardType
@@ -13,11 +12,7 @@ interface CardProps {
 }
 
 export function Card({ card, isCreateCard, onClick, className }: CardProps) {
-  const daysSinceLastReview = useMemo(() => {
-    if (!card?.lastReviewed) return 0
-    return Math.floor((new Date().getTime() - new Date(card.lastReviewed).getTime()) / (1000 * 60 * 60 * 24))
-  }, [card?.lastReviewed])
-
+  
   if (isCreateCard) {
     return (
       <button
@@ -42,9 +37,6 @@ export function Card({ card, isCreateCard, onClick, className }: CardProps) {
       <div className="p-4 flex-grow">
         <h3 className="font-medium text-gray-900 line-clamp-2">{card.question}</h3>
         <p className="mt-1 text-sm text-gray-500 line-clamp-3 flex-grow">{card.answer}</p>
-      </div>
-      <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t">
-        Last reviewed: {daysSinceLastReview} days ago
       </div>
     </div>
   )

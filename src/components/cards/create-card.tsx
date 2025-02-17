@@ -13,6 +13,7 @@ import {
 import { Textarea } from "~/components/ui/textarea"
 import { toast } from "~/hooks/use-toast"
 import { type Card } from "~/types/schema"
+import { addCard } from "~/server/actions/cards"
 
 interface CreateCardModalProps {
   deckId: number
@@ -30,27 +31,14 @@ export function CreateCardModal({ deckId, isOpen, onClose, onSuccess }: CreateCa
     setIsSubmitting(true)
 
     const formData = new FormData(event.currentTarget)
-    const cardData = {
-      deckId,
-      question: formData.get("question") as string,
-      answer: formData.get("answer") as string,
-    }
+    const question = formData.get("question") as string
+    const answer = formData.get("answer") as string
 
     try {
-      const response = await fetch("/api/cards/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cardData),
-      })
-
-      const result = await response.json() as { success: boolean, card?: Card, error?: string }
-
-      if (!response.ok) {
-        throw new Error(result.error ?? "Failed to create card")
-      }
+      const result = await addCard({ deckId, question, answer })
 
       if (!result.success) {
-        throw new Error(result.error ?? "Failed to create card")
+        throw new Error(result.error)
       }
 
       toast({

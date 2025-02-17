@@ -26,7 +26,7 @@ export function Sidebar({ className }: SidebarProps) {
     {
       id: "all",
       name: "All Cards",
-      href: "/decks",
+      href: "/decks/0",
     },
   ]
 

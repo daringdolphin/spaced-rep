@@ -1,28 +1,37 @@
-import { Inter } from "next/font/google"
-import "~/styles/globals.css"
-import { SidebarProvider } from "~/context/sidebar-context"
-import { Toaster } from "~/components/ui/toaster"
+import { ClerkProvider } from '@clerk/nextjs'
+import { Inter } from 'next/font/google'
+import '~/styles/globals.css'
 
-const inter = Inter({ subsets: ["latin"] })
+import { Sidebar } from "~/components/sidebar/sidebar"
+import { UserNav } from '~/components/auth/user-nav'
+import { SidebarProvider } from '~/context/sidebar-context'
 
-export const metadata = {
-  title: "Card Manager",
-  description: "Manage your card decks",
+const inter = Inter({ subsets: ['latin'] })
+
+interface RootLayoutProps {
+  children: React.ReactNode
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SidebarProvider>
-          {children}
-        </SidebarProvider>
-        <Toaster />
+        <ClerkProvider>
+          <SidebarProvider>
+            <div className="flex h-screen">
+              <Sidebar />
+              <div className="flex-1 flex flex-col">
+                <header className="border-b px-4 py-2">
+                  <UserNav />
+                </header>
+                <main className="flex-1 overflow-y-auto">
+                  {children}
+                </main>
+              </div>
+            </div>
+          </SidebarProvider>
+        </ClerkProvider>
       </body>
     </html>
   )
-}
+} 
