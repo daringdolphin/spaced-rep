@@ -1,16 +1,21 @@
-import { CardManagerContainer } from "~/components/cards/card-manager-container";
+import { CardManagerContainer } from "~/components/cards/card-manager-container"
 
+// Type for dynamic route params
+interface DeckPageProps {
+  params: Promise<{
+    id: string
+  }>
+}
 
-export default async function DeckPage(props : {
-  params: Promise<{id: string}>
-}) {
-  const {id} = await props.params;
-  const deckId = id === "all" ? 0 : parseInt(id);
+// Page component with typed params
+export default async function DeckPage({ params }: DeckPageProps) {
+  // Convert id to number, default to 0 if invalid
+  const { id } = await params
+  const deckId = id ? parseInt(id, 10) || 0 : 0
 
-  // Validate deckId if not "all"
-  if (id !== "all" && isNaN(deckId)) {
-    return <div className="p-6">Invalid deck ID</div>;
-  }
-
-  return <CardManagerContainer deckId={deckId} />;
+  return (
+    <main className="min-h-screen">
+      <CardManagerContainer deckId={deckId} />
+    </main>
+  )
 }
