@@ -30,10 +30,11 @@ export async function getCards(deckId?: number) {
     }
     return await getAllCards()
   } catch (error: unknown) {
+    console.error("Error in getCards:", error);
     return {
       success: false,
       error: "Failed to fetch cards"
-    }
+    };
   }
 }
 

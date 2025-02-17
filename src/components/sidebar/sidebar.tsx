@@ -1,6 +1,6 @@
 "use client"
 
-import { UserIcon, ChevronsLeft, Menu, Plus } from "lucide-react"
+import { ChevronsLeft, Menu, Plus } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { Deck } from "~/components/navigation/decks"
 import { cn } from "~/lib/utils"
@@ -39,8 +39,7 @@ export function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div className="flex items-center justify-between p-4">
-        <UserIcon className="h-4 w-4" />
+      <div className="flex items-center justify-end p-4">
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className="hover:text-primary transition-colors"

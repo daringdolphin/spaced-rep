@@ -39,7 +39,8 @@ export function CardManagerContainer({ deckId = 0 }: CardManagerContainerProps) 
             variant: "destructive",
           })
         }
-      } catch (error) {
+      } catch (error: unknown) {
+        console.error("Error in loadCards:", error);
         if (!isMounted) return
         toast({
           title: "Error",
@@ -81,6 +82,7 @@ export function CardManagerContainer({ deckId = 0 }: CardManagerContainerProps) 
         })
       }
     } catch (error: unknown) {
+      console.error("Error in handleCardCreated:", error);
       toast({
         title: "Error",
         description: "Failed to create card",
