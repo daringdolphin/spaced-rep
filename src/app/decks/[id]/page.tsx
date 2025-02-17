@@ -1,12 +1,14 @@
 import { CardManagerContainer } from "~/components/cards/card-manager-container"
 
-interface DeckPageProps {
-  params: {
-    id: string
-  }
+interface PageParams {
+  id: string
 }
 
-export default async function DeckPage({ params }: DeckPageProps) {
+export default async function DeckPage({
+  params,
+}: {
+  params: PageParams
+}) {
   const deckId = params.id === "all" ? 0 : parseInt(params.id)
 
   // Validate deckId if not "all"
